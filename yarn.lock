@@ -9,7 +9,7 @@
   dependencies:
     mime "^3.0.0"
 
-"@cloudflare/puppeteer@^0.0.4":
+"@cloudflare/puppeteer@0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@cloudflare/puppeteer/-/puppeteer-0.0.4.tgz#ce3ccfec1ca3c3c9da29f218b918e4fc854d2ef8"
   integrity sha512-fFIKG3INEnOsvbuOYqSVnr0JST34zteYFB9G26XB+yAVs/kw3AGC3fHLd2OYbv7UHsnjc0fzA6lEpjESoM1doQ==
@@ -173,6 +173,11 @@
   version "0.16.3"
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.16.3.tgz#94047dae921949cfb308117d993c4b941291ae10"
   integrity sha512-5/JuTd8OWW8UzEtyf19fbrtMJENza+C9JoPIkvItgTBQ1FO2ZLvjbPO6Xs54vk0s5JB5QsfieUEshRQfu7ZHow==
+
+"@types/node@^20.4.5":
+  version "20.4.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.5.tgz#9dc0a5cb1ccce4f7a731660935ab70b9c00a5d69"
+  integrity sha512-rt40Nk13II9JwQBdeYqmbn2Q6IVTA5uPhvSO+JVqdXw/6/4glI6oR9ezty/A9Hg5u7JH4OmYmuQ+XvjKm0Datg==
 
 acorn-walk@^8.2.0:
   version "8.2.0"
@@ -713,11 +718,6 @@ prebuild-install@^7.1.0:
     simple-get "^4.0.0"
     tar-fs "^2.0.0"
     tunnel-agent "^0.6.0"
-
-prettier@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.0.0.tgz#e7b19f691245a21d618c68bc54dc06122f6105ae"
-  integrity sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==
 
 printable-characters@^1.0.42:
   version "1.0.42"
