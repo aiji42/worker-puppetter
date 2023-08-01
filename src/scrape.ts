@@ -3,10 +3,12 @@ import puppeteer, { type BrowserWorker } from "@cloudflare/puppeteer";
 export const scrape = async (
   url: string,
   selector: string,
-  browserEnv: BrowserWorker,
+  browserEnv: BrowserWorker | string,
 ) => {
   let results: (string | null)[] = [];
-  const browser = await puppeteer.launch(browserEnv);
+  const browser = await (typeof browserEnv === "string"
+    ? puppeteer.connect({ browserWSEndpoint: browserEnv })
+    : puppeteer.launch(browserEnv));
   const page = await browser.newPage();
   await page.goto(url);
 
@@ -17,8 +19,8 @@ export const scrape = async (
       new Promise((_, reject) =>
         setTimeout(
           reject,
-          10000,
-          `Timeout (10000ms) for searching "${selector}"`,
+          30000,
+          `Timeout (30000ms) for searching "${selector}"`,
         ),
       ),
     ]);

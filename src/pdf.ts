@@ -1,8 +1,10 @@
 import puppeteer, { type BrowserWorker } from "@cloudflare/puppeteer";
 
-export const pdf = async (url: string, browserEnv: BrowserWorker) => {
+export const pdf = async (url: string, browserEnv: BrowserWorker | string) => {
   let file: Buffer | null = null;
-  const browser = await puppeteer.launch(browserEnv);
+  const browser = await (typeof browserEnv === "string"
+    ? puppeteer.connect({ browserWSEndpoint: browserEnv })
+    : puppeteer.launch(browserEnv));
   const page = await browser.newPage();
   await page.goto(url);
 

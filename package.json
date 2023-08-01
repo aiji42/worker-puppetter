@@ -16,5 +16,8 @@
   "dependencies": {
     "@cloudflare/puppeteer": "0.0.4",
     "hono": "^3.3.4"
+  },
+  "prettier": {
+    "max_line_length": 120
   }
 }

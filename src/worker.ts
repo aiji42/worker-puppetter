@@ -1,7 +1,7 @@
+import type { BrowserWorker } from "@cloudflare/puppeteer";
 import { Hono } from "hono";
 import { Buffer } from "node:buffer";
 import { screenshot } from "./screenshot";
-import type { BrowserWorker } from "@cloudflare/puppeteer";
 import { scrape } from "./scrape";
 import { pdf } from "./pdf";
 
@@ -10,6 +10,7 @@ globalThis.Buffer = Buffer;
 interface Env {
   Bindings: {
     MYBROWSER: BrowserWorker;
+    BROWSERLESS: string | undefined;
   };
 }
 
@@ -20,7 +21,8 @@ app.get("/screenshot", async (c) => {
   if (!url) {
     return c.text("Please add an ?url=https://example.com/ parameter");
   }
-  const img = await screenshot(url, c.env.MYBROWSER);
+
+  const img = await screenshot(url, c.env.BROWSERLESS || c.env.MYBROWSER);
 
   if (!img) return c.status(500);
   else c.header("Content-Type", "image/jpg");
@@ -33,7 +35,7 @@ app.get("/pdf", async (c) => {
   if (!url) {
     return c.text("Please add an ?url=https://example.com/ parameter");
   }
-  const file = await pdf(url, c.env.MYBROWSER);
+  const file = await pdf(url, c.env.BROWSERLESS || c.env.MYBROWSER);
 
   if (!file) return c.status(500);
   else c.header("Content-Type", "application/pdf");
@@ -49,7 +51,11 @@ app.get("/scrape", async (c) => {
       "Please add an ?url=https://example.com/&selector=p parameter",
     );
   }
-  const results = await scrape(url, selector, c.env.MYBROWSER);
+  const results = await scrape(
+    url,
+    selector,
+    c.env.BROWSERLESS || c.env.MYBROWSER,
+  );
 
   return c.json(results);
 });
