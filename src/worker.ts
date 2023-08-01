@@ -3,6 +3,7 @@ import { Buffer } from "node:buffer";
 import { screenshot } from "./screenshot";
 import type { BrowserWorker } from "@cloudflare/puppeteer";
 import { scrape } from "./scrape";
+import { pdf } from "./pdf";
 
 globalThis.Buffer = Buffer;
 
@@ -25,6 +26,19 @@ app.get("/screenshot", async (c) => {
   else c.header("Content-Type", "image/jpg");
 
   return c.body(img);
+});
+
+app.get("/pdf", async (c) => {
+  const url = c.req.query("url");
+  if (!url) {
+    return c.text("Please add an ?url=https://example.com/ parameter");
+  }
+  const file = await pdf(url, c.env.MYBROWSER);
+
+  if (!file) return c.status(500);
+  else c.header("Content-Type", "application/pdf");
+
+  return c.body(file);
 });
 
 app.get("/scrape", async (c) => {
