@@ -1,40 +1,43 @@
-import puppeteer from "@cloudflare/puppeteer";
-import { Buffer } from 'node:buffer'
+import { Hono } from "hono";
+import { Buffer } from "node:buffer";
+import { screenshot } from "./screenshot";
+import type { BrowserWorker } from "@cloudflare/puppeteer";
+import { scrape } from "./scrape";
 
-globalThis.Buffer = Buffer
+globalThis.Buffer = Buffer;
 
 interface Env {
-  MYBROWSER: Fetcher;
+  Bindings: {
+    MYBROWSER: BrowserWorker;
+  };
 }
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const { searchParams } = new URL(request.url);
-    let url = searchParams.get("url");
-    let img: ArrayBuffer | null = null;
-    if (url) {
-      url = new URL(url).toString(); // normalize
-      const browser = await puppeteer.launch(env.MYBROWSER);
-      const page = await browser.newPage();
-      await page.goto(url);
-      try {
-        img = (await page.screenshot()) as ArrayBuffer;
-      } catch (e) {
-        console.error(e)
-      } finally {
-        await browser.close();
-      }
+const app = new Hono<Env>();
 
-      return new Response(img, {
-        headers: {
-          "content-type": "image/jpeg",
-        },
-      });
+app.get("/screenshot", async (c) => {
+  const url = c.req.query("url");
+  if (!url) {
+    return c.text("Please add an ?url=https://example.com/ parameter");
+  }
+  const img = await screenshot(url, c.env.MYBROWSER);
 
-    } else {
-      return new Response(
-        "Please add an ?url=https://example.com/ parameter"
-      );
-    }
-  },
-};
+  if (!img) return c.status(500);
+  else c.header("Content-Type", "image/jpg");
+
+  return c.body(img);
+});
+
+app.get("/scrape", async (c) => {
+  const url = c.req.query("url");
+  const selector = c.req.query("selector");
+  if (!url || !selector) {
+    return c.text(
+      "Please add an ?url=https://example.com/&selector=p parameter",
+    );
+  }
+  const results = await scrape(url, selector, c.env.MYBROWSER);
+
+  return c.json(results);
+});
+
+export default app;
