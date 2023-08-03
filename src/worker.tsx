@@ -4,6 +4,8 @@ import { Buffer } from "node:buffer";
 import { screenshot } from "./screenshot";
 import { scrape } from "./scrape";
 import { pdf } from "./pdf";
+import { jsx } from "hono/jsx";
+import { ScreenshotPage } from "./pages/screenshot-page";
 
 globalThis.Buffer = Buffer;
 
@@ -16,18 +18,26 @@ interface Env {
 
 const app = new Hono<Env>();
 
-app.get("/screenshot", async (c) => {
+app.get("/", async (c) => {
   const url = c.req.query("url");
+  const device = c.req.query("device");
   if (!url) {
-    return c.text("Please add an ?url=https://example.com/ parameter");
+    return c.html(<ScreenshotPage url={null} device={device ?? null} />);
   }
 
-  const img = await screenshot(url, c.env.BROWSERLESS || c.env.MYBROWSER);
+  const img = await screenshot(
+    url,
+    device ?? "desktop",
+    c.env.BROWSERLESS || c.env.MYBROWSER,
+  );
 
-  if (!img) return c.status(500);
-  else c.header("Content-Type", "image/jpg");
-
-  return c.body(img);
+  return c.html(
+    <ScreenshotPage
+      url={url}
+      device={device ?? null}
+      imageBase64={img.toString("base64")}
+    />,
+  );
 });
 
 app.get("/pdf", async (c) => {

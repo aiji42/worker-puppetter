@@ -1,5 +1,5 @@
 name = "puppeteer"
-main = "src/worker.ts"
+main = "src/worker.tsx"
 compatibility_date = "2023-07-24"
 
 compatibility_flags = ["nodejs_compat"]
