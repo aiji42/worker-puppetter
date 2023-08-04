@@ -28,6 +28,7 @@ app.get("/", async (c) => {
   const img = await screenshot(
     url,
     device ?? "desktop",
+    "webp",
     c.env.BROWSERLESS || c.env.MYBROWSER,
   );
 
@@ -35,17 +36,22 @@ app.get("/", async (c) => {
     <ScreenshotPage
       url={url}
       device={device ?? null}
-      imageBase64={img.toString("base64")}
+      image={{ base64Data: img.toString("base64"), mimeType: "image/webp" }}
     />,
   );
 });
 
 app.get("/pdf", async (c) => {
   const url = c.req.query("url");
+  const device = c.req.query("device");
   if (!url) {
     return c.text("Please add an ?url=https://example.com/ parameter");
   }
-  const file = await pdf(url, c.env.BROWSERLESS || c.env.MYBROWSER);
+  const file = await pdf(
+    url,
+    device ?? "desktop",
+    c.env.BROWSERLESS || c.env.MYBROWSER,
+  );
 
   if (!file) return c.status(500);
   else c.header("Content-Type", "application/pdf");
@@ -55,6 +61,7 @@ app.get("/pdf", async (c) => {
 
 app.get("/scrape", async (c) => {
   const url = c.req.query("url");
+  const device = c.req.query("device");
   const selector = c.req.query("selector");
   if (!url || !selector) {
     return c.text(
@@ -63,6 +70,7 @@ app.get("/scrape", async (c) => {
   }
   const results = await scrape(
     url,
+    device ?? "desktop",
     selector,
     c.env.BROWSERLESS || c.env.MYBROWSER,
   );

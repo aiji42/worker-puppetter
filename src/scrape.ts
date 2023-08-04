@@ -1,7 +1,8 @@
-import puppeteer, { type BrowserWorker } from "@cloudflare/puppeteer";
+import puppeteer, { type BrowserWorker, devices } from "@cloudflare/puppeteer";
 
 export const scrape = async (
   url: string,
+  device: string,
   selector: string,
   browserEnv: BrowserWorker | string,
 ) => {
@@ -10,6 +11,15 @@ export const scrape = async (
     ? puppeteer.connect({ browserWSEndpoint: browserEnv })
     : puppeteer.launch(browserEnv));
   const page = await browser.newPage();
+  if (device === "mobile") {
+    await page.emulate(devices["iPhone X"]);
+  } else {
+    await page.setViewport({
+      width: 1366,
+      height: 768,
+    });
+  }
+
   await page.goto(url);
 
   try {

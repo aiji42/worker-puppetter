@@ -15,11 +15,11 @@ const devices = [
 export const ScreenshotPage = ({
   url,
   device,
-  imageBase64,
+  image,
 }: {
   url: string | null;
   device: string | null;
-  imageBase64?: string;
+  image?: { base64Data: string; mimeType: string };
 }) => {
   return (
     <html>
@@ -47,8 +47,11 @@ export const ScreenshotPage = ({
             Capture!
           </button>
         </form>
-        {imageBase64 && (
-          <img src={`data:image/jpg;base64,${imageBase64}`} alt={url} />
+        {image && (
+          <img
+            src={`data:${image.mimeType};base64,${image.base64Data}`}
+            alt={url}
+          />
         )}
       </body>
     </html>

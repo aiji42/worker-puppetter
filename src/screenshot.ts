@@ -3,6 +3,7 @@ import puppeteer, { type BrowserWorker, devices } from "@cloudflare/puppeteer";
 export const screenshot = async (
   url: string,
   device: string,
+  mimeType: "png" | "jpeg" | "webp",
   browserEnv: BrowserWorker | string,
 ) => {
   let img: Buffer | null = null;
@@ -22,7 +23,9 @@ export const screenshot = async (
   await page.goto(url);
 
   try {
-    img = (await page.screenshot()) as Buffer;
+    img = (await page.screenshot({
+      type: mimeType,
+    })) as Buffer;
   } catch (e) {
     console.error(e);
     throw e;
